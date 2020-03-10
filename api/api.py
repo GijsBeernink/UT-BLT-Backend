@@ -2,14 +2,18 @@ import requests
 from local import *
 
 BLOCK_EXPLORER = "https://blockexplorer.com/api"
+BLOCKCHAIN_API = "https://blockchain.info/"
 TEST_ADDRESS = "3Lo4nDzH7Bi572T7t8pQGU2Ax9jVymHeC6"
 
 
-def search_from_address(address):
-    print(f"{BLOCK_EXPLORER}/txs/?address={address}")
-    trans = requests.get(f"{BLOCK_EXPLORER}/txs/?address={address}")
+def search_from_address(address, limit=50):
+    print(f"{BLOCKCHAIN_API}rawaddr/{address}")
+    trans = requests.get(f"{BLOCKCHAIN_API}rawaddr/{address}?limit={limit}")
 
-    print(trans.content)
+    print(len(trans.json()['txs']))
+
+    for tx in trans.json()['txs']:
+        print(tx)
 
 
 def get_abuse():
