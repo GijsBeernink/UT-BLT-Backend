@@ -1,0 +1,6 @@
+# IDEA
+.idea/
+venv/
+
+# Files
+local.py
