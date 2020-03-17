@@ -2,5 +2,11 @@
 .idea/
 venv/
 
+# Python
+__pycache__/
+
+# Folders
+databases/
+
 # Files
 local.py
