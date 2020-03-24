@@ -3,6 +3,7 @@ import pprint
 import json
 import os
 import api
+import time
 
 BLOCKCHAIN_API = 'https://blockchain.info/rawaddr/'
 FILE_STRUCTURE = '../databases/result_for_address_{}.txt'
@@ -25,43 +26,53 @@ def get_neighbours(address):
     with open(FILE_STRUCTURE.format(address)) as f:
         data = json.load(f)
         data_dict = json.loads(data)
+    number_of_txs = int(data_dict.get('n_tx'))
+    # print(number_of_txs)
+    if number_of_txs == 0:
+        return {address: 'No transactions'}
+    txs = data_dict.get('txs')
+    # print(txs)
+    for tx in txs:
+        tx_inputs = tx.get('inputs')
+        for tx_in in tx_inputs:
+            prev_out = tx_in.get('prev_out')
+            addr = prev_out.get('addr')
+            value = prev_out.get('value')
+            neighbours_in[addr] = value
 
-    txs = data_dict.get('txs')[0]
-    txs_inputs = txs.get('inputs')
-    for tx_in in txs_inputs:
-        prev_out = tx_in.get('prev_out')
-        address = prev_out.get('addr')
-        value = prev_out.get('value')
-        neighbours_in[address] = value
+        tx_outputs = tx.get('out')
+        for tx_out in tx_outputs:
+            addr = tx_out.get('addr')
+            value = tx_out.get('value')
+            neighbours_out[addr] = value
 
-    txs_outputs = txs.get('out')
-    for tx_out in txs_outputs:
-        address = tx_out.get('addr')
-        value = tx_out.get('value')
-        neighbours_out[address] = value
-
-    neighbours['in'] = neighbours_in
-    neighbours['out'] = neighbours_out
+        neighbours['in'] = neighbours_in
+        neighbours['out'] = neighbours_out
 
     return {address: neighbours}
 
 
-def request_address_data(address):
+def request_address_data(address, use_timeout=True):
     """
     Retrieve address data from BLOCKCHAIN_API.
+    :param use_timeout: If True, wait for ten seconds before making api call. Used to not get
+    blocked by api endpoint.
     :param address: the address to get transaction data for.
-    :return: False if api call did not succeed. True if successfully written to disk.
     """
+
+    if use_timeout:
+        time.sleep(10)
+    print("Requesting data for {}...".format(address), end=' ')
     response = requests.get(BLOCKCHAIN_API + address)
     if not response.ok:
-        return False
+        raise Exception("Could not get data from API endpoint.")
     data = response.text
     # pprint.pprint(data)
     with open(FILE_STRUCTURE.format(address), 'w+') as f:
         f.seek(0)
         f.truncate()
         json.dump(data.replace('\n', ''), f)
-        return True
+        print("Done.")
 
 
 def get_neighbours_with_depth(address, depth=1):
@@ -71,13 +82,23 @@ def get_neighbours_with_depth(address, depth=1):
     :param depth: Optional, find neighbours until some specific depth.
     :return: neighbours of given address.
     """
-    neighbours = get_neighbours(address)
-
+    neighbours = get_neighbours(address)[address]
+    if neighbours == 'No transactions':
+        return {address: neighbours}
     in_neighbours = neighbours.get('in')
     out_neighbours = neighbours.get('out')
-
-    for in_neighbour in in_neighbours.keys():
-        neighbours_of_in = get_neighbours(in_neighbour)
+    result = []
+    in_neighbours_at_current_depth = []
+    in_neighbours_at_previous_depth = in_neighbours.keys()
+    result.append(neighbours)
+    for i in range(1, depth):
+        for in_neighbour in in_neighbours_at_previous_depth:
+            neighbours_of_in = get_neighbours(in_neighbour)
+            result.append(neighbours_of_in)
+            in_neighbours_at_current_depth.append(neighbours_of_in.keys())
+        in_neighbours_at_previous_depth = in_neighbours_at_current_depth
+        in_neighbours_at_current_depth = []
+    return {address: result}
 
 
 def get_abuse_addresses():
@@ -97,10 +118,13 @@ def get_abuse_addresses():
 if __name__ == '__main__':
     # result = request_address_data('184CQ7agrApMYpnKTzWnsMjV9Wx3raHw7S', demo=False)
     # pprint.pprint(result)
-    abuse_addresses = get_abuse_addresses()
-    # get_neighbours_with_depth('184CQ7agrApMYpnKTzWnsMjV9Wx3raHw7S', depth=1)
-    print(len(abuse_addresses))
-    for address in abuse_addresses:
-
-    # print("\n\n")
+    # abuse_addresses = get_abuse_addresses()
+    res = get_neighbours_with_depth('1BYsGsgGwAnv5jWuS6KAT7d48e1qTBXote', depth=1)
+    print(res)
+    # print(neighbours)
+    # some_abuse_address = abuse_addresses[6]
+    # for address in abuse_addresses:
+    #     print(get_neighbours_with_depth(address, 1))
+    #
+    # # print("\n\n")
     # print(result)
