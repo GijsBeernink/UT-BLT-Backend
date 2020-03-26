@@ -7,30 +7,30 @@ def convert(nodes):
         k = n['key']
         if k not in j_obj['nodes']:
             j_obj['nodes'].append(
-                {"id": k, "label": k, "color": {"background": "rgb(233,150,122)", "border": "rgb(233,150,122)"}}
+                {"id": k, "label": k, "color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
             )
         for i in n['in']:
             if i not in j_obj['nodes']:
                 j_obj['nodes'].append(
-                    {"id": i, "label": i, "color": {"background": "rgb(233,150,122)", "border": "rgb(233,150,122)"}}
+                    {"id": i, "label": i, "color": {"background": "rgb(26,19,233)", "border": "rgb(26,19,233)"}}
                 )
             j_obj['edges'].append(
-                {"from": i, "to": k, "value": str(n['in'].get(i)), "color": "rgb(233,150,122)"}
+                {"from": i, "to": k, "value": str(n['in'].get(i)), "color": "rgb(233,150,122)", "arrows": "to"}
             )
         for o in n['out']:
             if o not in j_obj['nodes']:
                 j_obj['nodes'].append(
-                    {"id": o, "label": o, "color": {"background": "rgb(233,150,122)", "border": "rgb(233,150,122)"}}
+                    {"id": o, "label": o, "color": {"background": "rgb(159,159,163)", "border": "rgb(159,159,163)"}}
                 )
             j_obj['edges'].append(
-                {"from": k, "to": o, "value": str(n['in'].get(o)), "color": "rgb(233,150,122)"}
+                {"from": k, "to": o, "value": str(n['in'].get(o)), "color": "rgb(159,159,163)", "arrows": "to"}
             )
     return json.dumps(j_obj)
 
 
 def main():
     node = {
-        'key': '12345',
+        'key': '14jqiHgifMDyr12GQJqKJZHRb79ebp1209',
         'in':
             {
                 '18SGN6S2KpTeu2tUhCijzLLXWGSQ6yV8Qv': 4941000000,
