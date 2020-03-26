@@ -120,7 +120,7 @@ def get_neighbours_with_depth(address, depth=1):
             out_neighbours_at_previous_depth = out_neighbours_at_current_depth
             out_neighbours_at_current_depth = []
 
-    return {address: [{'in': in_result}, {'out': out_result}]}
+    return {'address': address, 'in': in_result, 'out': out_result}
 
 
 def get_abuse_addresses():
