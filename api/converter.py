@@ -1,7 +1,25 @@
 import json
 
 
+def getRelativeWidth(nodes):
+    maxWidth = 0
+
+    for n in nodes:
+        maxWidth = max(maxWidth, max(max(n['in'].values()), max(n['out'].values())))
+    print(maxWidth)
+    return maxWidth/20
+
+
+def getWidth(value, maxValue):
+    result = 1
+    if value is not None:
+        result = value/maxValue
+    print(result)
+    return result
+
+
 def convert(nodes):
+    maxWidth = getRelativeWidth(nodes)
     j_obj = {"nodes": [], "edges": []}
 
     def recursive_fun(arr, s="in"):
@@ -34,6 +52,7 @@ def convert(nodes):
                 j_obj['nodes'].append(
                     {"id": o, "label": o, "color": {"background": "rgb(159,159,163)", "border": "rgb(159,159,163)"}}
                 )
+            print(o)
             j_obj['edges'].append(
                 {"from": k, "to": o, "value": str(n['in'][0].get(o)), "color": "rgb(159,159,163)", "arrows": "to"}
             )
@@ -41,6 +60,8 @@ def convert(nodes):
         recursive_fun(n['out'][1:], s="out")
     return json.dumps(j_obj)
 
+#  "value": str(n['in'].get(i)),
+# "value": str(n['in'].get(o)),
 
 def main():
     node = {

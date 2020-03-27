@@ -4,8 +4,9 @@ import json
 import os
 import api
 import time
+from local import BLOCKCHAIN_API_TOKEN
 
-BLOCKCHAIN_API = 'https://blockchain.info/rawaddr/'
+BLOCKCHAIN_API = 'https://blockchain.info/rawaddr/{}?apikey=' + BLOCKCHAIN_API_TOKEN
 FILE_STRUCTURE = '../databases/result_for_address_{}.txt'
 
 
@@ -54,6 +55,7 @@ def get_neighbours(address):
         tx_counter += 1
         result[tx_counter] = neighbours
 
+    print("Result of get_neighbours:\n")
     return {address: result}
 
 
@@ -66,9 +68,9 @@ def request_address_data(address, use_timeout=True):
     """
 
     if use_timeout:
-        time.sleep(10)
+        time.sleep(5)
     print("Requesting data for {}...".format(address), end=' ')
-    response = requests.get(BLOCKCHAIN_API + address)
+    response = requests.get(BLOCKCHAIN_API.format(address))
     if not response.ok:
         raise Exception("Could not get data from API endpoint.")
     data = response.text
@@ -120,7 +122,7 @@ def get_neighbours_with_depth(address, depth=1):
             out_neighbours_at_previous_depth = out_neighbours_at_current_depth
             out_neighbours_at_current_depth = []
 
-    return {address: [{'in': in_result}, {'out': out_result}]}
+    return {'address': address, 'in': in_result, 'out': out_result}
 
 
 def get_abuse_addresses():
@@ -141,7 +143,10 @@ if __name__ == '__main__':
     # result = request_address_data('184CQ7agrApMYpnKTzWnsMjV9Wx3raHw7S', demo=False)
     # pprint.pprint(result)
     # abuse_addresses = get_abuse_addresses()
-    res = get_neighbours_with_depth('1CbhowVaSNvdqHo9jpFZjc1UyYW4mnEc4R', depth=2)
+
+    res = get_neighbours('1Cy5iXytz6yKgWBPPWqZrYJUkia8mU2N7R')
+
+    res = get_neighbours_with_depth('1AJbsFZ64EpEfS5UAjAfcUG8pH8Jn3rn1F', depth=1)
     print(res)
     # print(neighbours)
     # some_abuse_address = abuse_addresses[6]
