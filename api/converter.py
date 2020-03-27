@@ -19,28 +19,58 @@ def getWidth(value, maxValue):
 
 
 def convert(nodes):
-    maxWidth = getRelativeWidth(nodes)
+    #maxWidth = getRelativeWidth(nodes)
     j_obj = {"nodes": [], "edges": []}
 
-    def recursive_fun(arr, s="in"):
+    def recursive_fun(arr):
         for a in arr:
-            rec_k = a.keys()[0]
-            if rec_k not in j_obj['nodes']:
+            rec_k = list(a.keys())[0]
+            if rec_k not in [j['id'] for j in j_obj['nodes']]:
                 j_obj['nodes'].append(
                     {"id": rec_k, "label": rec_k, "color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
                 )
-            for rec_a in a.get(rec_k):
-                rec_a
+            rec_arr = a.get(rec_k)
+            for t in rec_arr:
+                if type(rec_arr.get(t)['in']) is dict:
+                    rec_t = rec_arr.get(t)['in']
+                else:
+                    rec_t = rec_arr.get(t)['in'][0]
+                for rec_i in rec_t:
+                    if rec_i not in [j['id'] for j in j_obj['nodes']]:
+                        j_obj['nodes'].append(
+                            {"id": rec_i, "label": rec_i, "color": {"background": "rgb(26,19,233)", "border": "rgb(26,19,233)"}}
+                        )
+                    j_obj['edges'].append(
+                        {"from": rec_i, "to": rec_k, "value": str(rec_t.get(rec_i)), "color": "rgb(233,150,122)",
+                         "arrows": "to"}
+                    )
+                if type(rec_arr.get(t)['out']) is dict:
+                    rec_t = rec_arr.get(t)['out']
+                else:
+                    rec_t = rec_arr.get(t)['out'][0]
+                for rec_o in rec_t:
+                    if rec_o not in [j['id'] for j in j_obj['nodes']]:
+                        j_obj['nodes'].append(
+                            {"id": rec_o, "label": rec_o, "color": {"background": "rgb(159,159,163)", "border": "rgb(159,159,163)"}}
+                        )
+                    j_obj['edges'].append(
+                        {"from": rec_k, "to": rec_o, "value": str(rec_t.get(rec_o)), "color": "rgb(159,159,163)",
+                         "arrows": "to"}
+                    )
+                if type(rec_arr.get(t)['in']) is list and rec_arr.get(t)['in'][1:]:
+                    recursive_fun(rec_arr.get(t)['in'][1:])
+                elif type(rec_arr.get(t)['out']) is list and rec_arr.get(t)['out'][1:]:
+                    recursive_fun(rec_arr.get(t)['out'][1:])
         return
 
     for n in nodes:
         k = n['address']
-        if k not in j_obj['nodes']:
+        if k not in [j['id'] for j in j_obj['nodes']]:
             j_obj['nodes'].append(
                 {"id": k, "label": k, "color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
             )
         for i in n['in'][0]:
-            if i not in j_obj['nodes']:
+            if i not in [j['id'] for j in j_obj['nodes']]:
                 j_obj['nodes'].append(
                     {"id": i, "label": i, "color": {"background": "rgb(26,19,233)", "border": "rgb(26,19,233)"}}
                 )
@@ -48,16 +78,15 @@ def convert(nodes):
                 {"from": i, "to": k, "value": str(n['in'][0].get(i)), "color": "rgb(233,150,122)", "arrows": "to"}
             )
         for o in n['out'][0]:
-            if o not in j_obj['nodes']:
+            if o not in [j['id'] for j in j_obj['nodes']]:
                 j_obj['nodes'].append(
                     {"id": o, "label": o, "color": {"background": "rgb(159,159,163)", "border": "rgb(159,159,163)"}}
                 )
-            print(o)
             j_obj['edges'].append(
                 {"from": k, "to": o, "value": str(n['in'][0].get(o)), "color": "rgb(159,159,163)", "arrows": "to"}
             )
         recursive_fun(n['in'][1:])
-        recursive_fun(n['out'][1:], s="out")
+        recursive_fun(n['out'][1:])
     return json.dumps(j_obj)
 
 #  "value": str(n['in'].get(i)),
