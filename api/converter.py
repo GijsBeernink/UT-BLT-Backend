@@ -1,7 +1,25 @@
 import json
 
 
+def getRelativeWidth(nodes):
+    maxWidth = 0
+
+    for n in nodes:
+        maxWidth = max(maxWidth, max(max(n['in'].values()), max(n['out'].values())))
+    print(maxWidth)
+    return maxWidth/20
+
+
+def getWidth(value, maxValue):
+    result = 1
+    if value is not None:
+        result = value/maxValue
+    print(result)
+    return result
+
+
 def convert(nodes):
+    maxWidth = getRelativeWidth(nodes)
     j_obj = {"nodes": [], "edges": []}
     for n in nodes:
         k = n['key']
@@ -15,18 +33,21 @@ def convert(nodes):
                     {"id": i, "label": i, "color": {"background": "rgb(26,19,233)", "border": "rgb(26,19,233)"}}
                 )
             j_obj['edges'].append(
-                {"from": i, "to": k, "value": str(n['in'].get(i)), "color": "rgb(233,150,122)", "arrows": "to"}
+                {"from": i, "to": k, "width": getWidth(n['in'].get(i), maxWidth), "color": "rgb(233,150,122)", "arrows": "to"}
             )
         for o in n['out']:
             if o not in j_obj['nodes']:
                 j_obj['nodes'].append(
                     {"id": o, "label": o, "color": {"background": "rgb(159,159,163)", "border": "rgb(159,159,163)"}}
                 )
+            print(o)
             j_obj['edges'].append(
-                {"from": k, "to": o, "value": str(n['in'].get(o)), "color": "rgb(159,159,163)", "arrows": "to"}
+                {"from": k, "to": o, "width": getWidth(n['out'].get(o), maxWidth), "color": "rgb(159,159,163)", "arrows": "to"}
             )
     return json.dumps(j_obj)
 
+#  "value": str(n['in'].get(i)),
+# "value": str(n['in'].get(o)),
 
 def main():
     node = {
