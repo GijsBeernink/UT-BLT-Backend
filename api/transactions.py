@@ -32,6 +32,8 @@ def get_neighbours(address):
         return {address: 'No transactions'}
     txs = data_dict.get('txs')
     # print(txs)
+    tx_counter = 0
+    result = dict()
     for tx in txs:
         tx_inputs = tx.get('inputs')
         for tx_in in tx_inputs:
@@ -49,7 +51,10 @@ def get_neighbours(address):
         neighbours['in'] = neighbours_in
         neighbours['out'] = neighbours_out
 
-    return {address: neighbours}
+        tx_counter += 1
+        result[tx_counter] = neighbours
+
+    return {address: result}
 
 
 def request_address_data(address, use_timeout=True):
@@ -85,20 +90,37 @@ def get_neighbours_with_depth(address, depth=1):
     neighbours = get_neighbours(address)[address]
     if neighbours == 'No transactions':
         return {address: neighbours}
-    in_neighbours = neighbours.get('in')
-    out_neighbours = neighbours.get('out')
-    result = []
-    in_neighbours_at_current_depth = []
-    in_neighbours_at_previous_depth = in_neighbours.keys()
-    result.append(neighbours)
-    for i in range(1, depth):
-        for in_neighbour in in_neighbours_at_previous_depth:
-            neighbours_of_in = get_neighbours(in_neighbour)
-            result.append(neighbours_of_in)
-            in_neighbours_at_current_depth.append(neighbours_of_in.keys())
-        in_neighbours_at_previous_depth = in_neighbours_at_current_depth
+    # print(neighbours)
+    for key in neighbours.keys():
+        current_transaction = neighbours.get(key)
+        in_neighbours = current_transaction.get('in')
+        out_neighbours = current_transaction.get('out')
+
+        in_result = []
         in_neighbours_at_current_depth = []
-    return {address: result}
+        in_neighbours_at_previous_depth = in_neighbours.keys()
+        in_result.append(in_neighbours)
+        for i in range(1, depth):
+            for in_neighbour in in_neighbours_at_previous_depth:
+                neighbours_of_in = get_neighbours(in_neighbour)
+                in_result.append(neighbours_of_in)
+                in_neighbours_at_current_depth.append(neighbours_of_in.keys())
+            in_neighbours_at_previous_depth = in_neighbours_at_current_depth
+            in_neighbours_at_current_depth = []
+
+        out_result = []
+        out_neighbours_at_current_depth = []
+        out_neighbours_at_previous_depth = out_neighbours.keys()
+        out_result.append(out_neighbours)
+        for i in range(1, depth):
+            for out_neighbour in out_neighbours_at_previous_depth:
+                neighbours_of_out = get_neighbours(out_neighbour)
+                out_result.append(neighbours_of_out)
+                out_neighbours_at_current_depth.append(neighbours_of_out.keys())
+            out_neighbours_at_previous_depth = out_neighbours_at_current_depth
+            out_neighbours_at_current_depth = []
+
+    return {'address': address, 'in': in_result, 'out': out_result}
 
 
 def get_abuse_addresses():
@@ -119,7 +141,7 @@ if __name__ == '__main__':
     # result = request_address_data('184CQ7agrApMYpnKTzWnsMjV9Wx3raHw7S', demo=False)
     # pprint.pprint(result)
     # abuse_addresses = get_abuse_addresses()
-    res = get_neighbours_with_depth('1BYsGsgGwAnv5jWuS6KAT7d48e1qTBXote', depth=1)
+    res = get_neighbours_with_depth('1CbhowVaSNvdqHo9jpFZjc1UyYW4mnEc4R', depth=2)
     print(res)
     # print(neighbours)
     # some_abuse_address = abuse_addresses[6]
