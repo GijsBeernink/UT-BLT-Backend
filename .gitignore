@@ -6,7 +6,7 @@ venv/
 __pycache__/
 
 # Folders
-databases/
+databases/2020*
 
 # Files
 local.py

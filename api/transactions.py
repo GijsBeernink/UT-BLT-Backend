@@ -86,82 +86,6 @@ def request_address_data(address, use_timeout=True):
         print("Done.")
 
 
-# def get_neighbours_with_depth(address, depth=1):
-#     """
-#     Get neighbours of node with specific depth.
-#     :param address: address to find neighbours for
-#     :param depth: Optional, find neighbours until some specific depth.
-#     :return: neighbours of given address.
-#     """
-#     neighbours = get_neighbours(address)[address]
-#     if neighbours == 'No transactions':
-#         return {address: neighbours}
-#     # print(neighbours)
-#     for key in neighbours.keys():
-#         current_transaction = neighbours.get(key)
-#         print("current")
-#         print(current_transaction)
-#         in_neighbours = current_transaction.get('in')
-#         out_neighbours = current_transaction.get('out')
-#
-#         print("in/out")
-#         print(in_neighbours)
-#         print(out_neighbours)
-#
-#         in_result = []
-#         in_neighbours_at_current_depth = []
-#         in_neighbours_at_previous_depth = in_neighbours.keys()
-#         in_result.append(in_neighbours)
-#         for i in range(1, depth):
-#             for in_neighbour in in_neighbours_at_previous_depth:
-#                 neighbours_of_in = get_neighbours(in_neighbour)
-#                 for key_2 in neighbours_of_in.keys():
-#                     in_result.append(neighbours_of_in.get(key_2))
-#                 # in_result.append(neighbours_of_in)
-#                 in_neighbours_at_current_depth.append(neighbours_of_in.keys())
-#             in_neighbours_at_previous_depth = in_neighbours_at_current_depth
-#             in_neighbours_at_current_depth = []
-#
-#         out_result = []
-#         out_neighbours_at_current_depth = []
-#         out_neighbours_at_previous_depth = out_neighbours.keys()
-#         out_result.append(out_neighbours)
-#         for i in range(1, depth):
-#             for out_neighbour in out_neighbours_at_previous_depth:
-#                 neighbours_of_out = get_neighbours(out_neighbour)
-#                 for key_2 in neighbours_of_out.keys():
-#                     out_result.append(neighbours_of_out.get(key_2))
-#                 # out_result.append(neighbours_of_out)
-#                 out_neighbours_at_current_depth.append(neighbours_of_out.keys())
-#             out_neighbours_at_previous_depth = out_neighbours_at_current_depth
-#             out_neighbours_at_current_depth = []
-#
-#     return {'address': address, 'in': in_result, 'out': out_result}
-
-# def get_neighbours_of_tx(tx_dict):
-#     for in_key in tx_dict.get('in'):
-#         get_neighbours(in_key)
-
-
-# def get_neighbours_with_depth(address, depth):
-#     """
-#     Get neighbours of node with specific depth.
-#     :param address: address to find neighbours for
-#     :param depth: Optional, find neighbours until some specific depth.
-#     :return: neighbours of given address.
-#     """
-#     neighbours = get_neighbours(address)[address]
-#
-#     for i in range(0, depth):
-#         # Loop through all transactions
-#         for tx_keys in neighbours.keys():
-#             current_transaction = neighbours.get(tx_keys)
-#
-#             total = set(current_transaction.get('in')).union(set(current_transaction.get('out')))
-#         print(total)
-#         for addr in total:
-#             result = get_neighbours(addr)
-
 def get_neighbours_with_depth(address, depth=1):
     if depth <= 0:
         return address
@@ -181,13 +105,11 @@ def recursive_get_neighbours_with_depth(address, depth):
 
         for addr_in in current_in:
             if addr_in not in result.keys():
-                result[addr_in] = recursive_get_neighbours_with_depth(addr_in, depth-1)
+                result[addr_in] = recursive_get_neighbours_with_depth(addr_in, depth - 1)
         for addr_out in current_out:
             if addr_out not in result.keys():
-                result[addr_out] = recursive_get_neighbours_with_depth(addr_out, depth-1)
+                result[addr_out] = recursive_get_neighbours_with_depth(addr_out, depth - 1)
     return result
-
-
 
 
 def get_abuse_addresses():
@@ -204,6 +126,21 @@ def get_abuse_addresses():
     return addresses
 
 
+def get_interesting_abuse_addresses():
+    all_addresses = get_abuse_addresses()
+    interesting = []
+    for address in all_addresses:
+        neighbours = get_neighbours(address)[address]
+        if neighbours == 'No transactions':
+            continue
+        if len(neighbours.keys()) <= 2:
+            continue
+        interesting.append(address)
+        print(interesting)
+
+    return interesting
+
+
 if __name__ == '__main__':
     # result = request_address_data('184CQ7agrApMYpnKTzWnsMjV9Wx3raHw7S', demo=False)
     # pprint.pprint(result)
@@ -211,8 +148,8 @@ if __name__ == '__main__':
 
     # res = get_neighbours('1JRBisFrtAsY4E49419PSW6hLePH6jUdGi')
     # print(res)
-    res = get_neighbours_with_depth('1JRBisFrtAsY4E49419PSW6hLePH6jUdGi', depth=3)
-    print(res)
+    # res = get_neighbours_with_depth('1JRBisFrtAsY4E49419PSW6hLePH6jUdGi', depth=3)
+    # print(res)
     # res = get_neighbours_with_depth('1JRBisFrtAsY4E49419PSW6hLePH6jUdGi', depth=2)
     # print(res)
     # print(neighbours)
@@ -222,3 +159,4 @@ if __name__ == '__main__':
     #
     # # print("\n\n")
     # print(result)
+    print(get_interesting_abuse_addresses())
