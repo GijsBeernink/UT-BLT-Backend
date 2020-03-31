@@ -105,10 +105,16 @@ def recursive_get_neighbours_with_depth(address, depth):
         current_out = current_tx.get('out')
 
         for addr_in in current_in:
+            if addr_in is None:
+                print("Found None, this is probably a Bech32 address.")
+                result[addr_in] = 'Probably Some Bech32 Address'
             if addr_in not in result.keys():
                 result[addr_in] = recursive_get_neighbours_with_depth(addr_in, depth - 1)
         for addr_out in current_out:
-            if addr_out not in result.keys():
+            if addr_out is None:
+                print("Found None, this is probably a Bech32 address.")
+                result[addr_out] = 'Probably Some Bech32 Address'
+            if addr_out not in result.keys() and addr_out is not None:
                 result[addr_out] = recursive_get_neighbours_with_depth(addr_out, depth - 1)
     return result
 
@@ -153,7 +159,7 @@ def save_to_file(address, depth, resulting_neighbours_dict):
 if __name__ == '__main__':
 
     # Address to search:
-    addr = '1JRBisFrtAsY4E49419PSW6hLePH6jUdGi'
+    addr = '115p7UMMngoj1pMvkpHijcRdfJNXj6LrLn'
     # Depth to search this address:
     search_depth = 2
 
