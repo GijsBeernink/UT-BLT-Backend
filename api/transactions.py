@@ -96,7 +96,7 @@ def recursive_get_neighbours_with_depth(address, depth):
     neighbours = get_neighbours(address)
     result = dict()
     if depth == 1:
-        return neighbours[address]
+        return neighbours
 
     for tx_s in dict(neighbours[address]).keys():
         current_tx = neighbours[address].get(tx_s)
@@ -150,8 +150,8 @@ if __name__ == '__main__':
     # print(res)
     # res = get_neighbours_with_depth('1JRBisFrtAsY4E49419PSW6hLePH6jUdGi', depth=3)
     # print(res)
-    # res = get_neighbours_with_depth('1JRBisFrtAsY4E49419PSW6hLePH6jUdGi', depth=2)
-    # print(res)
+    res = get_neighbours_with_depth('1JRBisFrtAsY4E49419PSW6hLePH6jUdGi', depth=2)
+    print(res)
     # print(neighbours)
     # some_abuse_address = abuse_addresses[6]
     # for address in abuse_addresses:
@@ -159,4 +159,4 @@ if __name__ == '__main__':
     #
     # # print("\n\n")
     # print(result)
-    print(get_interesting_abuse_addresses())
+    # print(get_interesting_abuse_addresses())
