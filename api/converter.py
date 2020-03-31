@@ -5,7 +5,11 @@ FILE_STRUCTURE = '../converted_database/converted_{}.json'
 def getRelativeWidth(nodes):
     maxWidth = 0
 
+
     for n in nodes:
+        print("sum")
+        print(sum(n['in'].values()))
+        print(sum(n['out'].values()))
         maxWidth = max(maxWidth, max(max(n['in'].values()), max(n['out'].values())))
     print(maxWidth)
     return maxWidth / 20
@@ -21,6 +25,32 @@ def getWidth(value, maxValue):
 
 def convert(n):
     j_obj = {"nodes": [], "edges": []}
+# <<<<<<< HEAD
+#     for n in nodes:
+#         k = n['key']
+#         if k not in j_obj['nodes']:
+#             j_obj['nodes'].append(
+#                 {"id": k, "label": k[:10] + "..", "title": k,  "color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
+#             )
+#         for i in n['in']:
+#             if i not in j_obj['nodes']:
+#                 j_obj['nodes'].append(
+#                     {"id": i, "label": i[:10] + "..", "title": i,"group": 1, "color": {"background": "rgb(26,19,233)", "border": "rgb(26,19,233)"}}
+#                 )
+#             j_obj['edges'].append(
+#                 {"from": i, "to": k, "title": str(format(n['in'].get(i), ',d')), "width": (n['in'].get(i) / (sum(n['in'].values())/10)) + 0.5, "color": "rgb(233,150,122)", "arrows": "to"}
+#             )
+#         for o in n['out']:
+#             if o not in j_obj['nodes']:
+#                 j_obj['nodes'].append(
+#                     {"id": o, "label": o[:10] + "..", "title": o, "group": 2, "color": {"background": "rgb(159,159,163)", "border": "rgb(159,159,163)"}}
+#                 )
+#             print(o)
+#             j_obj['edges'].append(
+#                 {"from": k, "to": o, "title": str(format(n['out'].get(o), ',d')), "width": (n['out'].get(o)/ (sum(n['out'].values())/10)) + 0.5, "color": "rgb(159,159,163)", "arrows": "to"}
+#             )
+#     return json.dumps(j_obj)
+# =======
 
     def add_trans(arr):
         in_dict = arr.get('in')
@@ -29,15 +59,15 @@ def convert(n):
         for i in in_dict:
             if i not in [jo['id'] for jo in j_obj['nodes']]:
                 j_obj['nodes'].append(
-                    {"id": i, "label": i, "color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
+                    {"id": i, "label": i[:10] + "..", "title": i,"group": 1,"color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
                 )
             for j in out_dict:
                 if first and j not in [jo['id'] for jo in j_obj['nodes']]:
                     j_obj['nodes'].append(
-                        {"id": j, "label": j, "color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
+                        {"id": j, "label": j[:10] + "..", "title": j, "group": 2, "color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
                     )
                 j_obj['edges'].append(
-                    {"from": i, "to": j, "value": str(out_dict.get(j)), "color": "rgb(233,150,122)", "arrows": "to"}
+                    {"from": i, "to": j, "title": str(format(out_dict.get(j), ',d')), "width": (out_dict.get(j)/ (sum(out_dict.values())/10)) + 0.5, "color": "rgb(233,150,122)", "arrows": "to"}
                 )
             first = False
 
@@ -145,6 +175,7 @@ def convert(n):
 #         recursive_fun(n['in'][1:])
 #         recursive_fun(n['out'][1:])
 #     return json.dumps(j_obj)
+
 
 #  "value": str(n['in'].get(i)),
 # "value": str(n['in'].get(o)),
