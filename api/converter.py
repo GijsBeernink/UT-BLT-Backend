@@ -1,6 +1,6 @@
 import json
 
-FILE_STRUCTURE = '../converted_database/converted_address.json'
+FILE_STRUCTURE = '../converted_database/converted_{}.json'
 
 def getRelativeWidth(nodes):
     maxWidth = 0
@@ -148,6 +148,11 @@ def convert(n):
 
 #  "value": str(n['in'].get(i)),
 # "value": str(n['in'].get(o)),
+
+
+def get_first_address(node):
+    return list(node.keys())[0]
+
 
 def main():
     node = {'1JRBisFrtAsY4E49419PSW6hLePH6jUdGi': {
@@ -6000,7 +6005,7 @@ def main():
             }
         }
     }}
-    with open(FILE_STRUCTURE, 'w') as f:
+    with open(FILE_STRUCTURE.format(get_first_address(node)), 'w') as f:
         f.seek(0)
         f.truncate()
         json.dump(convert(node), f)
