@@ -7,7 +7,8 @@ import time
 from local import BLOCKCHAIN_API_TOKEN
 
 BLOCKCHAIN_API = 'https://blockchain.info/rawaddr/{}?apikey=' + BLOCKCHAIN_API_TOKEN
-FILE_STRUCTURE = '../databases/result_for_address_{}.txt'
+FILE_STRUCTURE_API_CALL = '../databases/result_for_address_{}.txt'
+FILE_STRUCTURE_RESULT_WITH_DEPTH = '../databases/results/address_{}_with_depth_{}.txt'
 
 
 def get_neighbours(address):
@@ -17,10 +18,10 @@ def get_neighbours(address):
     :return: Dictionary with address:neighbours dictionary. Where neighbours is an array
     of two dictionaries (one for in and one for outgoing transactions).
     """
-    if not os.path.isfile(FILE_STRUCTURE.format(address)):
+    if not os.path.isfile(FILE_STRUCTURE_API_CALL.format(address)):
         request_address_data(address)
 
-    with open(FILE_STRUCTURE.format(address)) as f:
+    with open(FILE_STRUCTURE_API_CALL.format(address)) as f:
         data = json.load(f)
         data_dict = json.loads(data)
     number_of_txs = int(data_dict.get('n_tx'))
@@ -79,7 +80,7 @@ def request_address_data(address, use_timeout=True):
         raise Exception("Could not get data from API endpoint.")
     data = response.text
     # pprint.pprint(data)
-    with open(FILE_STRUCTURE.format(address), 'w+') as f:
+    with open(FILE_STRUCTURE_API_CALL.format(address), 'w+') as f:
         f.seek(0)
         f.truncate()
         json.dump(data.replace('\n', ''), f)
@@ -141,22 +142,21 @@ def get_interesting_abuse_addresses():
     return interesting
 
 
-if __name__ == '__main__':
-    # result = request_address_data('184CQ7agrApMYpnKTzWnsMjV9Wx3raHw7S', demo=False)
-    # pprint.pprint(result)
-    # abuse_addresses = get_abuse_addresses()
+def save_to_file(address, depth, resulting_neighbours_dict):
+    with open(FILE_STRUCTURE_RESULT_WITH_DEPTH.format(address, depth), 'w+') as f:
+        f.seek(0)
+        f.truncate()
+        json.dump(resulting_neighbours_dict, f)
+        print("Done.")
 
-    # res = get_neighbours('1JRBisFrtAsY4E49419PSW6hLePH6jUdGi')
-    # print(res)
-    # res = get_neighbours_with_depth('1JRBisFrtAsY4E49419PSW6hLePH6jUdGi', depth=3)
-    # print(res)
-    res = get_neighbours_with_depth('1JRBisFrtAsY4E49419PSW6hLePH6jUdGi', depth=2)
-    print(res)
-    # print(neighbours)
-    # some_abuse_address = abuse_addresses[6]
-    # for address in abuse_addresses:
-    #     print(get_neighbours_with_depth(address, 1))
-    #
-    # # print("\n\n")
-    # print(result)
-    # print(get_interesting_abuse_addresses())
+
+if __name__ == '__main__':
+
+    # Address to search:
+    addr = '1JRBisFrtAsY4E49419PSW6hLePH6jUdGi'
+    # Depth to search this address:
+    search_depth = 2
+
+    res = get_neighbours_with_depth(address=addr, depth=search_depth)
+    save_to_file(address=addr, depth=search_depth, resulting_neighbours_dict=res)
+
