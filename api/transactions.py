@@ -10,7 +10,6 @@ BLOCKCHAIN_API = 'https://blockchain.info/rawaddr/{}?apikey=' + BLOCKCHAIN_API_T
 FILE_STRUCTURE_API_CALL = '../databases/result_for_address_{}.txt'
 FILE_STRUCTURE_RESULT_WITH_DEPTH = '../databases/results/address_{}_with_depth_{}.txt'
 
-
 def get_neighbours(address):
     """
     Get the neighbours of an address. Neighbours are nodes that have some connection to address.
