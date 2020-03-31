@@ -10,6 +10,7 @@ BLOCKCHAIN_API = 'https://blockchain.info/rawaddr/{}?apikey=' + BLOCKCHAIN_API_T
 FILE_STRUCTURE_API_CALL = '../databases/result_for_address_{}.txt'
 FILE_STRUCTURE_RESULT_WITH_DEPTH = '../databases/results/address_{}_with_depth_{}.txt'
 
+
 def get_neighbours(address):
     """
     Get the neighbours of an address. Neighbours are nodes that have some connection to address.
@@ -158,7 +159,6 @@ def save_to_file(address, depth, resulting_neighbours_dict):
 
 
 if __name__ == '__main__':
-
     # Address to search:
     addr = '115p7UMMngoj1pMvkpHijcRdfJNXj6LrLn'
     # Depth to search this address:
@@ -166,4 +166,3 @@ if __name__ == '__main__':
 
     res = get_neighbours_with_depth(address=addr, depth=search_depth)
     save_to_file(address=addr, depth=search_depth, resulting_neighbours_dict=res)
-
