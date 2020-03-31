@@ -67,7 +67,7 @@ def convert(n):
                         {"id": j, "label": j[:10] + "..", "title": j, "group": 2, "color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
                     )
                 j_obj['edges'].append(
-                    {"from": i, "to": j, "title": str(format(out_dict.get(j), ',d')), "width": (out_dict.get(j)/ (sum(out_dict.values())/10)) + 0.5, "color": "rgb(233,150,122)", "arrows": "to"}
+                    {"from": i, "to": j, "title": str(format(out_dict.get(j), ',d')), "width": (out_dict.get(j)/ (sum(out_dict.values())/10)) + 0.5, "color.color": "rgb(233,150,122)", "color.highlight": "rgb(10,9,233)", "arrows": "to"}
                 )
             first = False
 
@@ -6036,7 +6036,6 @@ def main():
         f.truncate()
         json.dump(convert(node), f)
         print("Done.")
-
 
 if __name__ == '__main__':
     main()
