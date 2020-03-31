@@ -4,7 +4,11 @@ import json
 def getRelativeWidth(nodes):
     maxWidth = 0
 
+
     for n in nodes:
+        print("sum")
+        print(sum(n['in'].values()))
+        print(sum(n['out'].values()))
         maxWidth = max(maxWidth, max(max(n['in'].values()), max(n['out'].values())))
     print(maxWidth)
     return maxWidth/20
@@ -25,24 +29,24 @@ def convert(nodes):
         k = n['key']
         if k not in j_obj['nodes']:
             j_obj['nodes'].append(
-                {"id": k, "label": k, "color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
+                {"id": k, "label": k[:10] + "..", "title": k,  "color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
             )
         for i in n['in']:
             if i not in j_obj['nodes']:
                 j_obj['nodes'].append(
-                    {"id": i, "label": i, "color": {"background": "rgb(26,19,233)", "border": "rgb(26,19,233)"}}
+                    {"id": i, "label": i[:10] + "..", "title": i,"group": 1, "color": {"background": "rgb(26,19,233)", "border": "rgb(26,19,233)"}}
                 )
             j_obj['edges'].append(
-                {"from": i, "to": k, "width": getWidth(n['in'].get(i), maxWidth), "color": "rgb(233,150,122)", "arrows": "to"}
+                {"from": i, "to": k, "title": str(format(n['in'].get(i), ',d')), "width": (n['in'].get(i) / (sum(n['in'].values())/10)) + 0.5, "color": "rgb(233,150,122)", "arrows": "to"}
             )
         for o in n['out']:
             if o not in j_obj['nodes']:
                 j_obj['nodes'].append(
-                    {"id": o, "label": o, "color": {"background": "rgb(159,159,163)", "border": "rgb(159,159,163)"}}
+                    {"id": o, "label": o[:10] + "..", "title": o, "group": 2, "color": {"background": "rgb(159,159,163)", "border": "rgb(159,159,163)"}}
                 )
             print(o)
             j_obj['edges'].append(
-                {"from": k, "to": o, "width": getWidth(n['out'].get(o), maxWidth), "color": "rgb(159,159,163)", "arrows": "to"}
+                {"from": k, "to": o, "title": str(format(n['out'].get(o), ',d')), "width": (n['out'].get(o)/ (sum(n['out'].values())/10)) + 0.5, "color": "rgb(159,159,163)", "arrows": "to"}
             )
     return json.dumps(j_obj)
 
