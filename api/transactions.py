@@ -77,6 +77,8 @@ def request_address_data(address, use_timeout=True):
     print("Requesting data for {}...".format(address), end=' ')
     response = requests.get(BLOCKCHAIN_API.format(address))
     if not response.ok:
+        if response.status_code == 429:
+            print("Too many requests!")
         raise Exception("Could not get data from API endpoint.")
     data = response.text
     # pprint.pprint(data)
