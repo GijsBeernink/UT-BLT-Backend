@@ -96,7 +96,7 @@ def recursive_get_neighbours_with_depth(address, depth):
     neighbours = get_neighbours(address)
     result = dict()
     if depth == 1:
-        return neighbours[address]
+        return neighbours
 
     for tx_s in dict(neighbours[address]).keys():
         current_tx = neighbours[address].get(tx_s)
