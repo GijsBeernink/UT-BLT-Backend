@@ -95,7 +95,7 @@ def convert(n):
 
     def find_trans(arr):
         rec_k = list(arr.keys())
-        if rec_k[0] == 1:
+        if str(rec_k[0]) == '1':
             for key in rec_k:
                 add_trans(arr.get(key))
         else:
@@ -207,8 +207,8 @@ def get_first_address(node):
 
 
 def main():
-    addr = '115p7UMMngoj1pMvkpHijcRdfJNXj6LrLn'
-    depth = 3
+    addr = '1JRBisFrtAsY4E49419PSW6hLePH6jUdGi'
+    depth = '2'
     with open(READ_FILE_STRUCTURE.format(addr, depth), 'r') as f:
         s = f.read()
         node = ast.literal_eval(s)
