@@ -77,6 +77,8 @@ def request_address_data(address, use_timeout=True):
     print("Requesting data for {}...".format(address), end=' ')
     response = requests.get(BLOCKCHAIN_API.format(address))
     if not response.ok:
+        if response.status_code == 429:
+            print("Too many requests!")
         raise Exception("Could not get data from API endpoint.")
     data = response.text
     # pprint.pprint(data)
@@ -157,7 +159,6 @@ def save_to_file(address, depth, resulting_neighbours_dict):
 
 
 if __name__ == '__main__':
-
     # Address to search:
     addr = '115p7UMMngoj1pMvkpHijcRdfJNXj6LrLn'
     # Depth to search this address:
@@ -165,4 +166,3 @@ if __name__ == '__main__':
 
     res = get_neighbours_with_depth(address=addr, depth=search_depth)
     save_to_file(address=addr, depth=search_depth, resulting_neighbours_dict=res)
-
