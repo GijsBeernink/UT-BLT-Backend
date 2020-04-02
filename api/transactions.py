@@ -96,7 +96,7 @@ def get_neighbours_with_depth(address, depth=1):
     if neighbours[address] == 'No transactions':
         print("No transactions for this address.")
         return neighbours
-    return recursive_get_neighbours_with_depth(address, depth)
+    return {'main_node': address, 'data': recursive_get_neighbours_with_depth(address, depth)}
 
 
 def recursive_get_neighbours_with_depth(address, depth):

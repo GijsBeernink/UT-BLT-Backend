@@ -1,6 +1,6 @@
 import ast
 import json
-from transactions import get_neighbours_with_depth, save_to_file
+from api.transactions import get_neighbours_with_depth, save_to_file
 
 WRITE_FILE_STRUCTURE = '../converted_database/converted_{}.json'
 READ_FILE_STRUCTURE = '../databases/results/address_{}_with_depth_{}.txt'
