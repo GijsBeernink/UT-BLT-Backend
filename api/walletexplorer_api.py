@@ -30,7 +30,8 @@ def get_wallet_address(address):
 
 def get_label(address):
     j_obj = get_wallet_address(address)
-    return 'Regular Address' if j_obj is None else j_obj['label']
+    print(j_obj)
+    return 'Regular Address' if j_obj is None else j_obj.get('label', "Regular Address")
 
 
 def main():
@@ -49,7 +50,7 @@ def main():
     # else:
     #     print("Address not found in walletexplorer")
 
-    label = get_label('12cgpFdJViXbwHbhrA3TuW1EGnL25Zqc3P')
+    label = get_label('1AcLc6tMgJ5NSXcNxa3v3K6fWJZGrbYeWG')
     print(label)
 
 if __name__ == '__main__':
