@@ -87,7 +87,7 @@ def convert(n):
 
 
 def main():
-    address = '1DxHp8B96ZC6o48UByifrZVEeSnFBZJPH7'
+    address = '1LYz7EgAF8PU6bSN8GDecnz9Gg814fs81W'
     depth = 2
     save_to_file(address=address, depth=depth, resulting_neighbours_dict=get_neighbours_with_depth(address=address, depth=depth))
     with open(READ_FILE_STRUCTURE.format(address, depth), 'r') as f:

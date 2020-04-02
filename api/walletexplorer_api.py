@@ -24,7 +24,7 @@ def get_wallet_address(address):
     # Gets the wallet address from the given Bitcoin address
     j_obj = rq.get(f"{API_URL}address-lookup?address={address}&caller=blockchain_project").json()
     time.sleep(1)
-    return j_obj['wallet_id'] if j_obj['found'] else None
+    return j_obj if j_obj['found'] else None
 
 
 def main():
@@ -33,9 +33,13 @@ def main():
     print(j_obj if j_obj is not None else "Address not found in walletexplorer")
 
     # Gets transactions of address' wallet
-    address = get_wallet_address("18Jro9LNFqBQarcc63WYGf3w7PdDAiwXpk")
-    if address is not None:
-        print(lookup_address(address=address, s="wallet"))
+    j_obj = get_wallet_address("12cgpFdJViXbwHbhrA3TuW1EGnL25Zqc3P")
+    if j_obj is not None:
+        # Print possible exchange
+        if 'label' in j_obj.keys():
+            print(j_obj['label'])
+        # Get all transactions of wallet
+        print(lookup_address(address=j_obj['address'], s="wallet"))
     else:
         print("Address not found in walletexplorer")
 
