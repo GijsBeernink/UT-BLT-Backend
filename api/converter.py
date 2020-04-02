@@ -86,12 +86,14 @@ def convert(n):
 
 
 def main():
-    address = '14ee2y99gEXeQXJ7RxrPv4G6ELL3A6gfFq'
+    address = '1HvhBLJWTPJeEdPLXjXL2m5foUaPED2gj1'
     depth = 2
     save_to_file(address=address, depth=depth, resulting_neighbours_dict=get_neighbours_with_depth(address=address, depth=depth))
     with open(READ_FILE_STRUCTURE.format(address, depth), 'r') as f:
         s = f.read()
         node = ast.literal_eval(s)
+    if 'main_node' not in node.keys():
+        return
     with open(WRITE_FILE_STRUCTURE.format(address), 'w') as f:
         f.seek(0)
         f.truncate()
