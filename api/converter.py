@@ -1,6 +1,6 @@
 import ast
 import json
-from api.transactions import get_neighbours_with_depth, save_to_file
+from transactions import get_neighbours_with_depth, save_to_file
 
 WRITE_FILE_STRUCTURE = '../converted_database/converted_{}.json'
 READ_FILE_STRUCTURE = '../databases/results/address_{}_with_depth_{}.txt'
@@ -38,25 +38,27 @@ def convert(n):
     def color_nodes(in_dict, out_dict, color_in, color_out, is_in=False):
         first = True
         for i in in_dict:
-            if i not in [jo['id'] for jo in j_obj['nodes']]:
-                j_obj['nodes'].append(
-                    {"id": i, "label": i[:10] + "..", "title": i, "group": 1,
-                     "color": {"background": color_in, "border": color_in}}
-                )
-            for j in out_dict:
-                if is_in:
-                    possible_mal.add(j)
-                if first and j not in [jo['id'] for jo in j_obj['nodes']]:
+            if i != 'null':
+                if i not in [jo['id'] for jo in j_obj['nodes']]:
                     j_obj['nodes'].append(
-                        {"id": j, "label": j[:10] + "..", "title": j, "group": 2,
-                         "color": {"background": color_out, "border": color_out}}
+                        {"id": i, "label": i[:10] + "..", "title": i, "group": 1,
+                         "color": {"background": color_in, "border": color_in}}
                     )
-                j_obj['edges'].append(
-                    {"from": i, "to": j, "title": str(format(out_dict.get(j), ',d')),
-                     "width": (out_dict.get(j) / (sum(out_dict.values()) / 10)) + 0.5,
-                     "color.color": "rgb(233,150,122)", "color.highlight": "rgb(10,9,233)", "arrows": "to"}
-                )
-            first = False
+                for j in out_dict:
+                    if j != 'null':
+                        if is_in:
+                            possible_mal.add(j)
+                        if first and j not in [jo['id'] for jo in j_obj['nodes']]:
+                            j_obj['nodes'].append(
+                                {"id": j, "label": j[:10] + "..", "title": j, "group": 2,
+                                 "color": {"background": color_out, "border": color_out}}
+                            )
+                        j_obj['edges'].append(
+                            {"from": i, "to": j, "title": str(format(out_dict.get(j), ',d')),
+                             "width": (out_dict.get(j) / (sum(out_dict.values()) / 10)) + 0.5,
+                             "color.color": "rgb(233,150,122)", "color.highlight": "rgb(10,9,233)", "arrows": "to"}
+                        )
+                first = False
 
     def add_trans(arr):
         in_dict = arr.get('in')
@@ -74,8 +76,7 @@ def convert(n):
         rec_k = list(arr.keys())
         if str(rec_k[0]) == '1':
             for key in rec_k:
-                if key != 'null':
-                    add_trans(arr.get(key))
+                add_trans(arr.get(key))
         else:
             for key in rec_k:
                 if key != 'null':
@@ -86,7 +87,7 @@ def convert(n):
 
 
 def main():
-    address = '1HvhBLJWTPJeEdPLXjXL2m5foUaPED2gj1'
+    address = '1DxHp8B96ZC6o48UByifrZVEeSnFBZJPH7'
     depth = 2
     save_to_file(address=address, depth=depth, resulting_neighbours_dict=get_neighbours_with_depth(address=address, depth=depth))
     with open(READ_FILE_STRUCTURE.format(address, depth), 'r') as f:
