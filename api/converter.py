@@ -1,6 +1,7 @@
 import ast
 import json
 from transactions import get_neighbours_with_depth, save_to_file
+from walletexplorer_api import get_label
 
 WRITE_FILE_STRUCTURE = '../converted_database/converted_{}.json'
 READ_FILE_STRUCTURE = '../databases/results/address_{}_with_depth_{}.txt'
@@ -72,15 +73,29 @@ def convert(n):
                 color_nodes(in_dict, out_dict, "rgb(159,159,163)", "rgb(159,159,163)", True)
                 break
 
-    def find_trans(arr):
+    def find_trans(arr, key=None):
         rec_k = list(arr.keys())
         if str(rec_k[0]) == '1':
+            if len(rec_k) >= 50:
+                label = get_label(key)
+                if label is not None:
+                    if key not in [jo['id'] for jo in j_obj['nodes']]:
+                        j_obj['nodes'].append(
+                            {"id": key, "label": key[:10] + "..", "title": label, "group": 1,
+                             "color": {"background": "rgb(102,233,64)", "border": "rgb(102,233,64)"}}
+                        )
+                    else:
+                        for ns in j_obj['nodes']:
+                            if ns['id'] == key:
+                                ns['title'] = label
+                                ns['color']['background'] = "rgb(102,233,64)"
+                                ns['color']['border'] = "rgb(102,233,64)"
             for key in rec_k:
                 add_trans(arr.get(key))
         else:
             for key in rec_k:
                 if key != 'null':
-                    find_trans(arr.get(key))
+                    find_trans(arr.get(key), key)
 
     find_trans(n['data'])
     return j_obj
@@ -89,7 +104,8 @@ def convert(n):
 def main():
     address = '1LYz7EgAF8PU6bSN8GDecnz9Gg814fs81W'
     depth = 2
-    save_to_file(address=address, depth=depth, resulting_neighbours_dict=get_neighbours_with_depth(address=address, depth=depth))
+    save_to_file(address=address, depth=depth,
+                 resulting_neighbours_dict=get_neighbours_with_depth(address=address, depth=depth))
     with open(READ_FILE_STRUCTURE.format(address, depth), 'r') as f:
         s = f.read()
         node = ast.literal_eval(s)

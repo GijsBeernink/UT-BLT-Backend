@@ -30,8 +30,7 @@ def get_wallet_address(address):
 
 def get_label(address):
     j_obj = get_wallet_address(address)
-    print(j_obj)
-    return 'Regular Address' if j_obj is None else j_obj.get('label', "Regular Address")
+    return None if j_obj is None else j_obj.get('label', None)
 
 
 def main():
