@@ -104,7 +104,6 @@ def recursive_get_neighbours_with_depth(address, depth):
     result = dict()
     if depth == 1:
         return neighbours
-    print(neighbours)
 
     for tx_s in dict(neighbours[address]).keys():
         current_tx = neighbours[address].get(tx_s)
@@ -165,9 +164,10 @@ def save_to_file(address, depth, resulting_neighbours_dict):
 
 if __name__ == '__main__':
     # Address to search:
-    addr = '14ee2y99gEXeQXJ7RxrPv4G6ELL3A6gfFqZZ'
+    addr = '1PaKK1eknDNYwpCWHz2omMhyjja9RSgf82'
     # Depth to search this address:
     search_depth = 2
 
     res = get_neighbours_with_depth(address=addr, depth=search_depth)
+    print(res)
     save_to_file(address=addr, depth=search_depth, resulting_neighbours_dict=res)
