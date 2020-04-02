@@ -28,7 +28,7 @@ def getWidth(value, maxValue):
 
 def convert(n):
     j_obj = {"nodes": [], "edges": []}
-    main_node = list(n.keys())[0]
+    main_node = n['main_node']
     j_obj['nodes'].append(
         {"id": main_node, "label": main_node[:10] + "..", "title": main_node, "group": 1,
          "color": {"background": "rgb(233,9,26)", "border": "rgb(233,9,26)"}}
@@ -81,12 +81,8 @@ def convert(n):
                 if key != 'null':
                     find_trans(arr.get(key))
 
-    find_trans(n)
+    find_trans(n['data'])
     return j_obj
-
-
-def get_first_address(node):
-    return list(node.keys())[0]
 
 
 def main():
