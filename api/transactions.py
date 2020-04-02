@@ -165,7 +165,7 @@ def save_to_file(address, depth, resulting_neighbours_dict):
 
 if __name__ == '__main__':
     # Address to search:
-    addr = '14ee2y99gEXeQXJ7RxrPv4G6ELL3A6gfFq'
+    addr = '1LYz7EgAF8PU6bSN8GDecnz9Gg814fs81W'
     # Depth to search this address:
     search_depth = 2
 
