@@ -1,5 +1,6 @@
-import json
 import ast
+import json
+from transactions import get_neighbours_with_depth, save_to_file
 
 WRITE_FILE_STRUCTURE = '../converted_database/converted_{}.json'
 READ_FILE_STRUCTURE = '../databases/results/address_{}_with_depth_{}.txt'
@@ -89,12 +90,13 @@ def get_first_address(node):
 
 
 def main():
-    addr = '115p7UMMngoj1pMvkpHijcRdfJNXj6LrLn'
-    depth = '3'
-    with open(READ_FILE_STRUCTURE.format(addr, depth), 'r') as f:
+    address = '14ee2y99gEXeQXJ7RxrPv4G6ELL3A6gfFq'
+    depth = 2
+    save_to_file(address=address, depth=depth, resulting_neighbours_dict=get_neighbours_with_depth(address=address, depth=depth))
+    with open(READ_FILE_STRUCTURE.format(address, depth), 'r') as f:
         s = f.read()
         node = ast.literal_eval(s)
-    with open(WRITE_FILE_STRUCTURE.format(addr), 'w') as f:
+    with open(WRITE_FILE_STRUCTURE.format(address), 'w') as f:
         f.seek(0)
         f.truncate()
         json.dump(convert(node), f)
