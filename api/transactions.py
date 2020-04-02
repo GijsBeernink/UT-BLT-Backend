@@ -92,6 +92,10 @@ def request_address_data(address, use_timeout=True):
 def get_neighbours_with_depth(address, depth=1):
     if depth <= 0:
         return address
+    neighbours = get_neighbours(address)
+    if neighbours[address] == 'No transactions':
+        print("No transactions for this address.")
+        return neighbours
     return recursive_get_neighbours_with_depth(address, depth)
 
 
@@ -100,6 +104,7 @@ def recursive_get_neighbours_with_depth(address, depth):
     result = dict()
     if depth == 1:
         return neighbours
+    print(neighbours)
 
     for tx_s in dict(neighbours[address]).keys():
         current_tx = neighbours[address].get(tx_s)
