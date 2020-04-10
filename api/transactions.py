@@ -6,14 +6,20 @@ import api
 import time
 from local import BLOCKCHAIN_API_TOKEN
 
+# The blockchain API endpoint. Use it with .format(address).
 BLOCKCHAIN_API = 'https://blockchain.info/rawaddr/{}?apikey=' + BLOCKCHAIN_API_TOKEN
+
+# Location of the result of the API call. Store these to make less API calls and get blocked less
+# fast.
 FILE_STRUCTURE_API_CALL = '../databases/result_for_address_{}.txt'
+# Store results with specific depth.
 FILE_STRUCTURE_RESULT_WITH_DEPTH = '../databases/results/address_{}_with_depth_{}.txt'
 
 
 def get_neighbours(address):
     """
-    Get the neighbours of an address. Neighbours are nodes that have some connection to address.
+    Get the neighbours of an address. Neighbours are nodes that have some connection to this
+    address.
     :param address: Address to get the neighbouring nodes for.
     :return: Dictionary with address:neighbours dictionary. Where neighbours is an array
     of two dictionaries (one for in and one for outgoing transactions).
@@ -60,14 +66,13 @@ def get_neighbours(address):
         neighbours_in = {}
         neighbours_out = {}
 
-    # print("Result of get_neighbours:\n")
     return {address: result}
 
 
 def request_address_data(address, use_timeout=True):
     """
     Retrieve address data from BLOCKCHAIN_API.
-    :param use_timeout: If True, wait for ten seconds before making api call. Used to not get
+    :param use_timeout: If True, wait for 5 seconds before making api call. Used to not get
     blocked by api endpoint.
     :param address: the address to get transaction data for.
     """
@@ -77,12 +82,12 @@ def request_address_data(address, use_timeout=True):
     print("Requesting data for {}...".format(address), end=' ')
     response = requests.get(BLOCKCHAIN_API.format(address))
     if not response.ok:
-        print(response.text)
         if response.status_code == 429:
-            print("Too many requests!")
-        raise Exception("Could not get data from API endpoint.")
+            print("Too many requests to this API endpoint!\n")
+            raise Exception("Blocked by the API. You've probably send too much API requests. Did "
+                            "you use a timeout of 5 seconds?")
+        raise Exception("Could not get data from API endpoint. Some error occurred")
     data = response.text
-    # pprint.pprint(data)
     with open(FILE_STRUCTURE_API_CALL.format(address), 'w+') as f:
         f.seek(0)
         f.truncate()
@@ -91,6 +96,12 @@ def request_address_data(address, use_timeout=True):
 
 
 def get_neighbours_with_depth(address, depth=1):
+    """
+    Start of recursive function to get neighbours of the current address with a certain depth.
+    :param address: The address from which to get all neighbours
+    :param depth: The depth to which to find neighbours
+    :return: Dictionary with the resulting nodes until specified depth.
+    """
     if depth <= 0:
         return address
     neighbours = get_neighbours(address)
@@ -101,6 +112,12 @@ def get_neighbours_with_depth(address, depth=1):
 
 
 def recursive_get_neighbours_with_depth(address, depth):
+    """
+    Recursive (util) part to get nodes with a specified depth.
+    :param address: The current address to get the nodes for until a specified depth
+    :param depth: How many hops to other nodes are made.
+    :return: Resulting dictionary of addresses and its neighbours.
+    """
     neighbours = get_neighbours(address)
     result = dict()
     if depth == 1:
@@ -129,25 +146,28 @@ def recursive_get_neighbours_with_depth(address, depth):
 def get_abuse_addresses():
     """
     Get abuse addresses from the abuse database file.
-    :return: All addresses in the file.
+    :return: All unique addresses in the database.
     """
     db = api.open_abuse_database()
     addresses = []
-    # print(db.address)
     for address in db.address.unique():
-        # print(address)
         addresses.append(address)
     return addresses
 
 
-def get_interesting_abuse_addresses():
+def get_interesting_abuse_addresses(transactions=2):
+    """
+    Find addresses from the abuse database that have at least a specified number amount of
+    transactions.
+    :return:
+    """
     all_addresses = get_abuse_addresses()
     interesting = []
     for address in all_addresses:
         neighbours = get_neighbours(address)[address]
         if neighbours == 'No transactions':
             continue
-        if len(neighbours.keys()) <= 2:
+        if len(neighbours.keys()) <= transactions:
             continue
         interesting.append(address)
         print(interesting)
@@ -156,6 +176,14 @@ def get_interesting_abuse_addresses():
 
 
 def save_to_file(address, depth, resulting_neighbours_dict):
+    """
+    Save the resulting dictionary with all neighbours with a specified depth. If the file already
+    exists it will discard all contents of this file.
+    :param address: The address that is the starting point
+    :param depth: Depth of how far up and down into the transactions to seek.
+    :param resulting_neighbours_dict: the result of the get_neighbours_with_depth function.
+    :return:
+    """
     with open(FILE_STRUCTURE_RESULT_WITH_DEPTH.format(address, depth), 'w+') as f:
         f.seek(0)
         f.truncate()
@@ -165,10 +193,9 @@ def save_to_file(address, depth, resulting_neighbours_dict):
 
 if __name__ == '__main__':
     # Address to search:
-    addr = '1LYz7EgAF8PU6bSN8GDecnz9Gg814fs81W'
+    addr = '1PGd8HMWW8w3h2Ftsp8rddM8Xg1sBAHUWk'
     # Depth to search this address:
     search_depth = 2
 
     res = get_neighbours_with_depth(address=addr, depth=search_depth)
-    print(res)
     save_to_file(address=addr, depth=search_depth, resulting_neighbours_dict=res)
