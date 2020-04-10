@@ -1,1 +1,0 @@
-"{    \"hash160\":\"bf7773cb613afee09b17079635829e02d1b52a40\",    \"address\":\"1JTPALHNJXDLMyuDNt7d52XQ7RAtd5o63Q\",    \"n_tx\":0,    \"total_received\":0,    \"total_sent\":0,    \"final_balance\":0,    \"txs\":[    ]}"

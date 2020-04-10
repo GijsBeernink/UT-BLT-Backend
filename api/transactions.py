@@ -1,9 +1,7 @@
 import json
 import os
 import time
-
 import requests
-
 import api
 from local import BLOCKCHAIN_API_TOKEN
 
@@ -36,7 +34,6 @@ def get_neighbours(address):
     if number_of_txs == 0:
         return {address: 'No transactions'}
     txs = data_dict.get('txs')
-    # print(txs)
     tx_counter = 0
     result = dict()
     neighbours = {}
@@ -194,9 +191,10 @@ def save_to_file(address, depth, resulting_neighbours_dict):
 
 if __name__ == '__main__':
     # Address to search:
-    addr = '1PGd8HMWW8w3h2Ftsp8rddM8Xg1sBAHUWk'
+    addr = '1LYz7EgAF8PU6bSN8GDecnz9Gg814fs81W'
     # Depth to search this address:
     search_depth = 2
 
     res = get_neighbours_with_depth(address=addr, depth=search_depth)
-    save_to_file(address=addr, depth=search_depth, resulting_neighbours_dict=res)
+    # save_to_file(address=addr, depth=search_depth, resulting_neighbours_dict=res)
+    print(res)
