@@ -1,9 +1,10 @@
-import requests
-import pprint
 import json
 import os
-import api
 import time
+
+import requests
+
+import api
 from local import BLOCKCHAIN_API_TOKEN
 
 # The blockchain API endpoint. Use it with .format(address).
