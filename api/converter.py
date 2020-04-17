@@ -135,11 +135,7 @@ def convert(n):
     return j_obj
 
 
-def main():
-    # Use of blockchain.info API and converts results to one JSON file usable in frontend application.
-    address = '1LYz7EgAF8PU6bSN8GDecnz9Gg814fs81W'
-    depth = 2
-
+def start_analysis(address, depth):
     # Save address' transactions to a certain depth in databases/results
     save_to_file(address=address, depth=depth,
                  resulting_neighbours_dict=get_neighbours_with_depth(address=address, depth=depth))
@@ -162,4 +158,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    start_analysis('1LYz7EgAF8PU6bSN8GDecnz9Gg814fs81W', 2)
