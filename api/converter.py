@@ -11,22 +11,22 @@ WRITE_FILE_STRUCTURE = '../converted_database/converted_file.json'
 READ_FILE_STRUCTURE = '../databases/results/address_{}_with_depth_{}.txt'
 
 
-def getRelativeWidth(nodes):
-    maxWidth = 0
+def get_relative_width(nodes):
+    max_width = 0
 
     for n in nodes:
         print("sum")
         print(sum(n['in'].values()))
         print(sum(n['out'].values()))
-        maxWidth = max(maxWidth, max(max(n['in'].values()), max(n['out'].values())))
-    print(maxWidth)
-    return maxWidth / 20
+        max_width = max(max_width, max(max(n['in'].values()), max(n['out'].values())))
+    print(max_width)
+    return max_width / 20
 
 
-def getWidth(value, maxValue):
+def get_width(value, max_value):
     result = 1
     if value is not None:
-        result = value / maxValue
+        result = value / max_value
     print(result)
     return result
 

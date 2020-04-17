@@ -56,7 +56,6 @@ def main():
     j_obj = lookup_address(address=a)
     print(j_obj if j_obj is not None else "Address not found in walletexplorer")
 
-
     # Gets transactions of address' wallet
     j_obj = get_wallet_address("1LYz7EgAF8PU6bSN8GDecnz9Gg814fs81W")
     if j_obj is not None:
@@ -67,7 +66,6 @@ def main():
         print(lookup_address(address=j_obj['wallet_id'], s="wallet"))
     else:
         print("Address not found in walletexplorer")
-
 
     # Gets the registered name exchange, if one, for the address. Example is of Poloniex.com
     print(get_label('12cgpFdJViXbwHbhrA3TuW1EGnL25Zqc3P'))

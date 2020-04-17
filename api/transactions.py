@@ -44,15 +44,15 @@ def get_neighbours(address):
         tx_inputs = tx.get('inputs')
         for tx_in in tx_inputs:
             prev_out = tx_in.get('prev_out')
-            addr = prev_out.get('addr')
+            b_addr = prev_out.get('addr')
             value = prev_out.get('value')
-            neighbours_in[addr] = value
+            neighbours_in[b_addr] = value
 
         tx_outputs = tx.get('out')
         for tx_out in tx_outputs:
-            addr = tx_out.get('addr')
+            b_addr = tx_out.get('addr')
             value = tx_out.get('value')
-            neighbours_out[addr] = value
+            neighbours_out[b_addr] = value
 
         neighbours['in'] = neighbours_in
         neighbours['out'] = neighbours_out

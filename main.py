@@ -1,4 +1,4 @@
-# Change address to analyse here.
+# Change the address to analyse here.
 ADDRESS = '1LYz7EgAF8PU6bSN8GDecnz9Gg814fs81W'
 
 # How far should be searched in all directions (inputs and outputs).

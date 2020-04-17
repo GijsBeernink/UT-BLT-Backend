@@ -11,10 +11,11 @@ FILE_STRUCTURE_RESULT_WITH_DEPTH = '../databases/results/address_{}_with_depth_{
 def get_address_from_file(filename):
     try:
         res = filename.split('_')[3].split('.')[0]
-    except IndexError as e:
+    except IndexError:
         print("Went wrong at {} ".format(filename))
         return
     return res
+
 
 f = open(FILE_STRUCTURE_RESULT_WITH_DEPTH.format("1LYz7EgAF8PU6bSN8GDecnz9Gg814fs81W", 2))
 # lines = str(f.readlines())
@@ -31,6 +32,3 @@ for file in os.listdir("../databases/"):
             os.remove("../databases/{}".format(file))
         except IsADirectoryError as e:
             print("Not removing directory")
-
-# for address in addresses:
-#     os.remove(FILE_STRUCTURE_API_CALL.format(address))

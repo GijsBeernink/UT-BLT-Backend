@@ -1,7 +1,7 @@
 # BLT_Backend
 Blockchain and Distriuted Ledger Technologies Project
 
-###API Keys
+### API Keys
 
 Get API keys for the following services:
 * [BitcoinAbuse](https://www.bitcoinabuse.com/api-docs) to get reported addresses
@@ -22,4 +22,4 @@ ADDRESS = '1LYz7EgAF8PU6bSN8GDecnz9Gg814fs81W'
 DEPTH = 2
 ```
 
-To see the results open the `Frontend.html` page and wait until it is loaded.
+To see the results open the `Frontend.html` page and wait until it is loaded. Note that due to an issue with Remote Content Policy, Google Chrome does currently *not* work!
