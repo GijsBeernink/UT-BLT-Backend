@@ -1,7 +1,7 @@
 import ast
 import json
-from transactions import get_neighbours_with_depth, save_to_file
-from walletexplorer_api import get_label
+from api.transactions import get_neighbours_with_depth, save_to_file
+from api.walletexplorer_api import get_label
 
 # Write to json file with naming of address by using .format(address)
 # WRITE_FILE_STRUCTURE = '../converted_database/converted_{}.json'

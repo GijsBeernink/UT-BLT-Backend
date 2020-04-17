@@ -186,7 +186,7 @@ def save_to_file(address, depth, resulting_neighbours_dict):
         f.seek(0)
         f.truncate()
         json.dump(resulting_neighbours_dict, f)
-        print("Done.")
+        # print("Done.")
 
 
 if __name__ == '__main__':
