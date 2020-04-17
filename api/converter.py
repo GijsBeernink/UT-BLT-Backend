@@ -4,7 +4,9 @@ from transactions import get_neighbours_with_depth, save_to_file
 from walletexplorer_api import get_label
 
 # Write to json file with naming of address by using .format(address)
-WRITE_FILE_STRUCTURE = '../converted_database/converted_{}.json'
+# WRITE_FILE_STRUCTURE = '../converted_database/converted_{}.json'
+# Write to standard json file
+WRITE_FILE_STRUCTURE = '../converted_database/converted_file.json'
 # Reading from txt file with naming of address and certain depth by using .format(address, depth)
 READ_FILE_STRUCTURE = '../databases/results/address_{}_with_depth_{}.txt'
 
@@ -154,7 +156,7 @@ def main():
         return
 
     # Convert results to JSON file and save it in converted_database
-    with open(WRITE_FILE_STRUCTURE.format(address), 'w') as f:
+    with open(WRITE_FILE_STRUCTURE, 'w') as f:
         f.seek(0)
         f.truncate()
         json.dump(convert(node), f)
