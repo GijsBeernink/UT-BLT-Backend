@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <style type="text/css">
+        /*
+        * The styling for the container of the network.
+        */
+        #mynetwork {
+            width: 98vw;
+            height: 88vh;
+            border: 1px solid lightgray;
+        }
+
+        /*
+        * The styling for the legend.
+        */
+        .dot {
+            height: 25px;
+            width: 25px;
+            border: 1px black;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .mal {
+            background-color: rgb(233,9,26);
+        }
+        .vic {
+            background-color: rgb(26,19,233);
+        }
+        .ser {
+            background-color: rgb(102,233,64);
+        }
+        .beg {
+            background-color: rgb(159,159,163);
+        }
+        .label {
+            margin-top: 0px;
+        }
+        .column_1 {
+            float: left;
+            width: 30%;
+        }
+        .column_2 {
+            float: left;
+            width: 7%;
+            text-align: center;
+        }
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+</head>
+
+<!--The container of the network and the loading bar-->
+<body>
+<div id="wrapper">
+    <div id="mynetwork"></div>
+    <div id="loadingBar">
+        <div class="outerBorder">
+            <div id="text">0%</div>
+            <div id="border">
+                <div id="bar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--The cluster feature and the legend-->
+<div class="row">
+    <div class="column_1">
+        <input type="text" placeholder="Address" id="node_address_input">
+        <input type="button" onclick="clusterByConnection()" value="Cluster node and its connections"/>
+    </div>
+    <div class="column_2">
+        <span class="dot mal"></span>
+        <p class="label">Malicious</p>
+    </div>
+    <div class="column_2">
+        <span class="dot vic"></span>
+        <p class="label">Victim</p>
+    </div>
+    <div class="column_2">
+        <span class="dot ser"></span>
+        <p class="label">Service</p>
+    </div>
+    <div class="column_2">
+        <span class="dot beg"></span>
+        <p class="label">Benign</p>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    /**
+     * This initializes the nodes.
+     */
+    let nodes = new vis.DataSet();
+
+    /**
+     * This initializes the edges.
+     */
+    let edges = new vis.DataSet();
+
+    /**
+     * This function loads the JSON and calls the redraw function.
+     */
+    $.getJSON("./converted_database/converted_file.json", function() {
+        console.log( "success" );
+    }).done(function(data){
+        redrawAll(data);
+    });
+
+    /**
+     * This defines the container for the network.
+     */
+    let container = document.getElementById("mynetwork");
+
+    /**
+     * This initializes the node and edge data.
+     */
+    let data = {
+        nodes: nodes,
+        edges: edges
+    };
+
+    /**
+     * This defines the options of the network.
+     */
+    let options = {
+        nodes: {
+            shape: "dot",
+            size: 16,
+            font: {
+                face: "Tahoma"
+            },
+            color: {
+                background: "rgb(233,9,26)",
+                border: "rgb(26,19,233)",
+                highlight: {
+                    background: "rgb(102,233,64)",
+                    border: "rgb(159,159,163)"
+                },
+                hover: {
+                    background: "rgb(37,22,233)",
+                    border: "rgb(10,9,233)"
+                }
+            },
+        },
+        edges: {
+            smooth: {
+                type: "continuous"
+            },
+            color: {
+                highlight: '#0000ff',
+                hover: "rgb(10,9,233)"
+            },
+            arrows: {
+                to: {
+                    scaleFactor: 0.5
+                }
+            },
+            selectionWidth: 5
+        },
+        interaction: {
+            dragNodes: false,
+            tooltipDelay: 200,
+            hideEdgesOnDrag: true,
+            hideEdgesOnZoom: true,
+            selectConnectedEdges: true
+            // hideNodesOnDrag: true
+        },
+        physics: {
+            enabled: true,
+            timestep: 0.1,
+            adaptiveTimestep: true,
+            maxVelocity: 1000,
+            minVelocity: 30,
+            stabilization: {
+                enabled: true,
+                updateInterval: 10
+            },
+            solver: "forceAtlas2Based",
+            forceAtlas2Based: {
+                gravitationalConstant: -200,
+                centralGravity: 0.010,
+                damping: 1,
+                springLength: 230,
+                springConstant: 0.18
+            },
+        }
+    };
+
+    /**
+     * This builds the network. Using the container, node and edge data and the options.
+     */
+    let network = new vis.Network(container, data, options);
+
+    /**
+     * This function indicate the progress of the loading progress of the graph.
+     */
+    network.on("stabilizationProgress", function(params) {
+        var widthFactor = params.iterations / params.total;
+        document.getElementById("text").innerHTML =
+            Math.round(widthFactor * 100) + "%";
+    });
+
+    /**
+     * This function indicate the completion of the loading progress of the graph.
+     */
+    network.once("stabilizationIterationsDone", function() {
+        document.getElementById("text").innerHTML = "100%";
+    });
+
+    /**
+     * This function clusters the selected node.
+     */
+    function clusterByConnection() {
+        network.setData(data);
+        let address = document.getElementById("node_address_input").value;
+        // console.log(address);
+        let color = data.nodes.get(address).color;
+        var clusterOptionsByData = {
+            clusterNodeProperties: {
+                id: 'cluster_' + address,
+                title: address,
+                label: 'Click to uncluster',
+                color: color,
+                shape: 'hexagon'
+            }
+        };
+        network.clusterByConnection(address, clusterOptionsByData);
+    }
+
+    /**
+     * This function unclusters a node when selected.
+     */
+    network.on("selectNode", function(params) {
+        if (params.nodes.length === 1) {
+            if (network.isCluster(params.nodes[0]) === true) {
+                network.openCluster(params.nodes[0]);
+            }
+        }
+        document.getElementById("node_address_input").value = params.nodes[0];
+    });
+
+
+    /**
+     * This function fills the DataSets from a JSON and updates the network.
+     */
+    function redrawAll(JSON) {
+
+        nodes.clear();
+        edges.clear();
+
+        nodes.add(JSON.nodes);
+        edges.add(JSON.edges);
+
+        /**
+         * Decrease this number to get faster loading, but less stable graphs. Not recommended for large graphs.
+         */
+        network.stabilize(1000);
+        network.fit();
+    }
+
+
+</script>
+</body>
+</html>
